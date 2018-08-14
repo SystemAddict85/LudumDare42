@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 171c4edabec501248bae9d6966293683, type: 3}
+  m_Name: BoostLoop
+  m_EditorClassIdentifier: 
+  soundName: BoostLoop
+  soundEffects:
+  - {fileID: 8300000, guid: e212bd11925c21c4b861664d41485b20, type: 3}
+  pitch:
+    minValue: 0.87219787
+    maxValue: 1.0201063
+  volume:
+    minValue: 0.25883982
+    maxValue: 0.35128263

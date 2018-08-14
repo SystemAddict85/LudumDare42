@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
-
-    ForwardThruster thruster;    
+           
+    ThrusterBooster booster;
 
     [SerializeField]
     private float noTurn = 0.1f; // Extent of the no-turn zone as a fraction of Screen.height;
@@ -13,14 +13,15 @@ public class PlayerController : MonoBehaviour {
     private float factor = 150.0f;
     private Vector3 center;
 
+    public Transform billboardTarget;
     [SerializeField]
-    CursorLockMode wantedMode;
-
+    private float rollSpeed = 1f;
 
     private void Awake()
     {
-        thruster = GetComponent<ForwardThruster>();
+        booster = GetComponent<ThrusterBooster>();
         center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        if (!billboardTarget) { Debug.LogError("Need to assign billboard"); }
     }
     void SetCursorState()
     {
@@ -34,39 +35,60 @@ public class PlayerController : MonoBehaviour {
 	}
 
     private void CheckForInput()
-    {
-        
+    {        
         CheckForMovement();
     }
 
     private void CheckForMovement()
     {
         //FlyingDirection();
-        if (Input.GetButton("Boost"))
+        if (Input.GetButton("Boost") && booster.CanBoost)
         {
-            thruster.Boost(.05f);
+            booster.OnBoost();
         }
         else if (Input.GetButton("Brake"))
         {
-            thruster.Brake(.05f);
+            booster.OnBrake();
         }
         else
         {
-            thruster.NormalizeSpeed();
+            booster.OnNormalThrust();
         }
+
+        if (Input.GetButton("FirePrimary"))
+        {
+            GetComponentInChildren<WeaponLoadout>().PrimaryFire();
+        }
+
         CameraLook();
     }
     private void CameraLook()
     {
         var delta = (Input.mousePosition - center) / Screen.height;
-        Debug.Log(delta);
+
+        var roll = 0f;
+
+        if (Input.GetButton("RollRight"))
+        {
+            roll =  -rollSpeed * Time.deltaTime;
+        }
+        else if (Input.GetButton("RollLeft"))
+        {
+            roll = rollSpeed * Time.deltaTime;
+        }
+
+        transform.Rotate(0, 0, roll);
+
         if (delta.y > noTurn)
-            transform.Rotate(-(delta.y - noTurn) * Time.deltaTime * factor, 0, 0);
+            transform.Rotate(-(delta.y - noTurn) * Time.deltaTime * factor, 0, roll);
         if (delta.y < -noTurn)
-            transform.Rotate(-(delta.y + noTurn) * Time.deltaTime * factor, 0, 0);
+            transform.Rotate(-(delta.y + noTurn) * Time.deltaTime * factor, 0, roll);
         if (delta.x > noTurn)
-            transform.Rotate(0, (delta.x - noTurn) * Time.deltaTime * factor, 0);
+            transform.Rotate(0, (delta.x - noTurn) * Time.deltaTime * factor, roll);
         if (delta.x < -noTurn)
-            transform.Rotate(0, (delta.x + noTurn) * Time.deltaTime * factor, 0);
+            transform.Rotate(0, (delta.x + noTurn) * Time.deltaTime * factor, roll);
+        
+
+        
     }
 }
